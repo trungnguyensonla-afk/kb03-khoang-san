@@ -10,25 +10,25 @@
   @import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&family=Roboto+Mono:wght@400;600&display=swap');
 
   :root {
-    --earth-dark:    #1a1208;
-    --earth-mid:     #2b1d10;
-    --earth-deep:    #3d2817;
-    --copper:        #b87333;
-    --copper-light:  #d99155;
-    --gold:          #f4a261;
-    --ochre:         #e9c46a;
-    --bronze:        #cd7f32;
-    --rust:          #c1532b;
-    --accent-red:    #e63946;
-    --accent-amber:  #f9c74f;
-    --accent-green:  #6a994e;
-    --bg-card:       #251a0e;
-    --bg-panel:      #1f1509;
-    --text-main:     #f5e6d3;
-    --text-dim:      #c9a87c;
-    --text-muted:    #8a7050;
-    --border:        #4a3520;
-    --shadow:        0 4px 24px rgba(0,0,0,0.5);
+    --earth-dark:    #faf6ee;
+    --earth-mid:     #f3eadb;
+    --earth-deep:    #ede0c9;
+    --copper:        #a8621f;
+    --copper-light:  #c47230;
+    --gold:          #cf8527;
+    --ochre:         #c69a3f;
+    --bronze:        #a36420;
+    --rust:          #a8421b;
+    --accent-red:    #c1272d;
+    --accent-amber:  #d4a30a;
+    --accent-green:  #4a7a36;
+    --bg-card:       #ffffff;
+    --bg-panel:      #fbf6ec;
+    --text-main:     #2d1f10;
+    --text-dim:      #6b5a3f;
+    --text-muted:    #9b8568;
+    --border:        #d8c8a8;
+    --shadow:        0 4px 18px rgba(168,98,31,0.10);
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -43,7 +43,7 @@
 
   /* ── HEADER ─────────────────────────────── */
   .header {
-    background: linear-gradient(135deg, #1a1208 0%, #2b1d10 50%, #5a3a1f 100%);
+    background: linear-gradient(135deg, #f3e8d3 0%, #e8d5b0 50%, #d9bb86 100%);
     border-bottom: 2px solid var(--copper);
     padding: 18px 32px 14px;
     display: flex;
@@ -156,7 +156,7 @@
 
   /* ── WARNING BANNER ──────────────────────── */
   .warning-banner {
-    background: linear-gradient(90deg, rgba(230,57,70,0.18) 0%, rgba(230,57,70,0.06) 100%);
+    background: linear-gradient(90deg, rgba(193,39,45,0.12) 0%, rgba(193,39,45,0.04) 100%);
     border: 1px solid var(--accent-red);
     border-left: 5px solid var(--accent-red);
     border-radius: 10px;
@@ -177,14 +177,14 @@
   }
   .warning-item {
     background: rgba(230,57,70,0.18);
-    border: 1px solid rgba(230,57,70,0.45);
+    border: 1px solid rgba(193,39,45,0.40);
     border-radius: 4px;
     padding: 3px 9px;
     font-size: 11.5px;
-    color: #ffb3b8;
+    color: #8a1a20;
     font-weight: 500;
   }
-  .warning-item strong { color: #ffd0d3; font-weight: 700; }
+  .warning-item strong { color: #6f1318; font-weight: 700; }
 
   /* ── SECTION TITLE ───────────────────────── */
   .section-title {
@@ -458,8 +458,8 @@
 
 /* ─── API status bar ─────────────────────────────────────────────────── */
 .api-bar {
-  background: linear-gradient(90deg, rgba(139,90,43,0.18), rgba(74,53,32,0.12));
-  border: 1px solid rgba(184,115,51,0.35);
+  background: linear-gradient(90deg, rgba(207,133,39,0.10), rgba(168,98,31,0.06));
+  border: 1px solid rgba(168,98,31,0.30);
   border-radius: 10px;
   padding: 12px 18px;
   margin: 0 auto 16px;
@@ -479,7 +479,7 @@
 }
 .api-status strong { color: var(--gold); }
 .api-status code {
-  background: rgba(0,0,0,0.25);
+  background: rgba(168,98,31,0.10);
   padding: 1px 6px;
   border-radius: 3px;
   font-family: 'Roboto Mono', monospace;
@@ -554,7 +554,7 @@
     <div class="kpi-sub">11 loại khoáng sản trên 54 xã, phường</div>
     <div class="kpi-target">
       <div class="kpi-progress-bg">
-        <div class="kpi-progress-fill" style="width:100%;background:linear-gradient(90deg,#b87333,#d99155)"></div>
+        <div class="kpi-progress-fill" style="width:100%;background:linear-gradient(90deg,#a8621f,#c47230)"></div>
       </div>
       <span class="kpi-target-label">QH đã phủ</span>
     </div>
@@ -566,7 +566,7 @@
     <div class="kpi-sub">62 mỏ đang hoạt động · Trữ lượng ~65,4 triệu</div>
     <div class="kpi-target">
       <div class="kpi-progress-bg">
-        <div class="kpi-progress-fill" style="width:72%;background:linear-gradient(90deg,#cd7f32,#f4a261)"></div>
+        <div class="kpi-progress-fill" style="width:72%;background:linear-gradient(90deg,#a36420,#cf8527)"></div>
       </div>
       <span class="kpi-target-label">72% so với QH</span>
     </div>
@@ -578,7 +578,7 @@
     <div class="kpi-sub">5 mỏ tạm dừng hoạt động sau kiểm tra</div>
     <div class="kpi-target">
       <div class="kpi-progress-bg">
-        <div class="kpi-progress-fill" style="width:21%;background:linear-gradient(90deg,#8a5a2b,#cd7f32)"></div>
+        <div class="kpi-progress-fill" style="width:21%;background:linear-gradient(90deg,#7d4a1c,#a36420)"></div>
       </div>
       <span class="kpi-target-label">Tỷ lệ KT/CP: 21,3%</span>
     </div>
@@ -590,7 +590,7 @@
     <div class="kpi-sub">Tập trung: Đá vôi (16) – Than (6) – Antimon (1)</div>
     <div class="kpi-target">
       <div class="kpi-progress-bg">
-        <div class="kpi-progress-fill" style="width:24%;background:linear-gradient(90deg,#b89800,#f9c74f)"></div>
+        <div class="kpi-progress-fill" style="width:24%;background:linear-gradient(90deg,#a08010,#d4a30a)"></div>
       </div>
       <span class="kpi-target-label">24,5% giấy phép có VP</span>
     </div>
@@ -602,7 +602,7 @@
     <div class="kpi-sub">Xã/phường có vi phạm cần can thiệp ngay</div>
     <div class="kpi-target">
       <div class="kpi-progress-bg">
-        <div class="kpi-progress-fill" style="width:14.8%;background:linear-gradient(90deg,#8b1c24,#e63946)"></div>
+        <div class="kpi-progress-fill" style="width:14.8%;background:linear-gradient(90deg,#7a1620,#c1272d)"></div>
       </div>
       <span class="kpi-target-label">8 / 54 đơn vị có HĐ KS</span>
     </div>
@@ -632,10 +632,10 @@
         <div class="panel-subtitle">11 loại khoáng sản · trục dọc = số lượng</div>
       </div>
       <div class="legend">
-        <div class="legend-item"><div class="legend-dot" style="background:#d99155"></div>Quy hoạch</div>
-        <div class="legend-item"><div class="legend-dot" style="background:#f4a261"></div>Cấp phép</div>
-        <div class="legend-item"><div class="legend-dot" style="background:#6a994e"></div>Kiểm tra</div>
-        <div class="legend-item"><div class="legend-dot" style="background:#e63946"></div>Vi phạm</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#c47230"></div>Quy hoạch</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#cf8527"></div>Cấp phép</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#4a7a36"></div>Kiểm tra</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#c1272d"></div>Vi phạm</div>
       </div>
     </div>
     <div class="panel-body">
@@ -961,11 +961,11 @@ function updateKpiCards() {
 
 // ── COLORS ───────────────────────────────────────────────────────────
 const C = {
-  copper: '#b87333', copperLight: '#d99155',
-  gold: '#f4a261', bronze: '#cd7f32',
-  red: '#e63946', amber: '#f9c74f', green: '#6a994e',
-  bgGrid: 'rgba(74,53,32,0.45)',
-  textDim: '#c9a87c', textMain: '#f5e6d3'
+  copper: '#a8621f', copperLight: '#c47230',
+  gold: '#cf8527', bronze: '#a36420',
+  red: '#c1272d', amber: '#d4a30a', green: '#4a7a36',
+  bgGrid: 'rgba(168,98,31,0.12)',
+  textDim: '#6b5a3f', textMain: '#2d1f10'
 };
 
 // global Chart.js defaults
@@ -1023,8 +1023,8 @@ _registerChart(new Chart(document.getElementById('donutMineral'), {
     labels: minLabels,
     datasets: [{
       data: minCP,
-      backgroundColor: ['#d99155','#f4a261','#cd7f32','#e9c46a','#c1532b','#b87333','#8b5a2b','#f9c74f','#6a994e','#a8d68e','#e76f51'],
-      borderColor: '#1f1509',
+      backgroundColor: ['#c47230','#cf8527','#a36420','#c69a3f','#a8421b','#a8621f','#7d4a1c','#d4a30a','#4a7a36','#7eaa5d','#b8513b'],
+      borderColor: '#ffffff',
       borderWidth: 2
     }]
   },
@@ -1110,7 +1110,7 @@ function groupBadge(g) {
   if (g === 'amber')  return '<span class="badge amber">🟠 Chưa KT</span>';
   if (g === 'yellow') return '<span class="badge yellow">🟡 Chưa CP</span>';
   if (g === 'green')  return '<span class="badge green">🟢 OK</span>';
-  return '<span class="badge" style="background:rgba(255,255,255,0.05);color:#666">— Trắng</span>';
+  return '<span class="badge" style="background:rgba(255,255,255,0.05);color:#9b8568">— Trắng</span>';
 }
 
 function renderTable() {
@@ -1142,7 +1142,7 @@ function renderTable() {
       <td class="td-num">${r.cp || '—'}</td>
       <td class="td-num">${r.kt || '—'}</td>
       <td class="td-num">${r.td || '—'}</td>
-      <td class="td-num" style="${r.vp>0?'color:#ff7280;font-weight:700':''}">${r.vp || '—'}</td>
+      <td class="td-num" style="${r.vp>0?'color:#c1272d;font-weight:700':''}">${r.vp || '—'}</td>
       <td>${groupBadge(r.group)}</td>
     </tr>
   `).join('');
