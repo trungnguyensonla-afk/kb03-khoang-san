@@ -1,0 +1,1173 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- KB-03 Khoáng sản Sơn La 2026 — Dashboard v2.0 (Google Sheets live data) -->
+<title>Dashboard Quản Lý Khoáng Sản – Sơn La 2026</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&family=Roboto+Mono:wght@400;600&display=swap');
+
+  :root {
+    --earth-dark:    #faf6ee;
+    --earth-mid:     #f3eadb;
+    --earth-deep:    #ede0c9;
+    --copper:        #a8621f;
+    --copper-light:  #c47230;
+    --gold:          #cf8527;
+    --ochre:         #c69a3f;
+    --bronze:        #a36420;
+    --rust:          #a8421b;
+    --accent-red:    #c1272d;
+    --accent-amber:  #d4a30a;
+    --accent-green:  #4a7a36;
+    --bg-card:       #ffffff;
+    --bg-panel:      #fbf6ec;
+    --text-main:     #2d1f10;
+    --text-dim:      #6b5a3f;
+    --text-muted:    #9b8568;
+    --border:        #d8c8a8;
+    --shadow:        0 4px 18px rgba(168,98,31,0.10);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--earth-dark);
+    color: var(--text-main);
+    font-family: 'Be Vietnam Pro', sans-serif;
+    font-size: 14px;
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ─────────────────────────────── */
+  .header {
+    background: linear-gradient(135deg, #f3e8d3 0%, #e8d5b0 50%, #d9bb86 100%);
+    border-bottom: 2px solid var(--copper);
+    padding: 18px 32px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky; top: 0; z-index: 100;
+  }
+  .header-left { display: flex; align-items: center; gap: 14px; }
+  .logo-icon {
+    width: 48px; height: 48px;
+    background: var(--earth-deep);
+    border: 2px solid var(--copper);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px;
+  }
+  .header-title { line-height: 1.2; }
+  .header-title h1 {
+    font-size: 18px; font-weight: 800;
+    color: var(--gold);
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+  }
+  .header-title p { font-size: 12px; color: var(--text-dim); font-weight: 400; }
+  .header-meta { display: flex; gap: 20px; align-items: center; }
+  .header-badge {
+    background: var(--earth-deep);
+    border: 1px solid var(--copper);
+    border-radius: 6px;
+    padding: 4px 12px;
+    font-size: 11px; font-weight: 600;
+    color: var(--gold);
+    text-transform: uppercase; letter-spacing: 0.05em;
+  }
+  .pulse-dot {
+    width: 10px; height: 10px;
+    background: var(--copper-light);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+    box-shadow: 0 0 0 0 var(--copper-light);
+  }
+  @keyframes pulse {
+    0%   { box-shadow: 0 0 0 0 rgba(217,145,85,0.7); }
+    70%  { box-shadow: 0 0 0 8px rgba(217,145,85,0); }
+    100% { box-shadow: 0 0 0 0 rgba(217,145,85,0); }
+  }
+  .live-label { font-size: 11px; color: var(--copper-light); font-weight: 600; letter-spacing: 0.05em; }
+
+  /* ── SCENARIO BAR ────────────────────────── */
+  .scenario-bar {
+    background: var(--bg-panel);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 32px;
+    display: flex; align-items: center; gap: 24px;
+    flex-wrap: wrap;
+  }
+  .scenario-label { font-size: 11px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; }
+  .scenario-title { font-size: 13px; font-weight: 700; color: var(--gold); }
+  .sep { width: 1px; height: 20px; background: var(--border); }
+  .scenario-tag {
+    font-size: 10px; font-weight: 600;
+    padding: 2px 8px; border-radius: 4px;
+    background: rgba(184,115,51,0.18);
+    border: 1px solid var(--copper);
+    color: var(--copper-light);
+    text-transform: uppercase; letter-spacing: 0.05em;
+  }
+
+  /* ── LAYOUT ──────────────────────────────── */
+  .main { padding: 20px 32px 40px; max-width: 1600px; }
+
+  /* ── KPI CARDS ───────────────────────────── */
+  .kpi-row {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+  .kpi-card {
+    background: linear-gradient(160deg, var(--bg-card) 0%, var(--earth-mid) 100%);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--copper);
+    border-radius: 10px;
+    padding: 16px 18px;
+    box-shadow: var(--shadow);
+    position: relative;
+    overflow: hidden;
+  }
+  .kpi-card.copper  { border-left-color: var(--copper); }
+  .kpi-card.gold    { border-left-color: var(--gold); }
+  .kpi-card.bronze  { border-left-color: var(--bronze); }
+  .kpi-card.amber   { border-left-color: var(--accent-amber); }
+  .kpi-card.red     { border-left-color: var(--accent-red); }
+
+  .kpi-label { font-size: 11px; color: var(--text-dim); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 6px; }
+  .kpi-value { font-size: 32px; font-weight: 800; font-family: 'Roboto Mono', monospace; line-height: 1; margin-bottom: 6px; }
+  .kpi-value.copper { color: var(--copper-light); }
+  .kpi-value.gold   { color: var(--gold); }
+  .kpi-value.bronze { color: var(--bronze); }
+  .kpi-value.amber  { color: var(--accent-amber); }
+  .kpi-value.red    { color: var(--accent-red); }
+  .kpi-sub { font-size: 11px; color: var(--text-muted); margin-bottom: 8px; }
+  .kpi-target { display: flex; align-items: center; gap: 8px; }
+  .kpi-progress-bg {
+    flex: 1; height: 6px; background: rgba(255,255,255,0.05);
+    border-radius: 3px; overflow: hidden;
+  }
+  .kpi-progress-fill { height: 100%; border-radius: 3px; transition: width .6s ease; }
+  .kpi-target-label { font-size: 10px; color: var(--text-muted); white-space: nowrap; }
+
+  /* ── WARNING BANNER ──────────────────────── */
+  .warning-banner {
+    background: linear-gradient(90deg, rgba(193,39,45,0.12) 0%, rgba(193,39,45,0.04) 100%);
+    border: 1px solid var(--accent-red);
+    border-left: 5px solid var(--accent-red);
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin-bottom: 22px;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+  .warning-icon { font-size: 28px; flex-shrink: 0; }
+  .warning-content h4 {
+    color: var(--accent-red); font-size: 14px; font-weight: 700;
+    text-transform: uppercase; margin-bottom: 4px; letter-spacing: 0.03em;
+  }
+  .warning-content p { font-size: 12.5px; color: var(--text-main); line-height: 1.5; margin-bottom: 8px; }
+  .warning-items {
+    display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px;
+  }
+  .warning-item {
+    background: rgba(230,57,70,0.18);
+    border: 1px solid rgba(193,39,45,0.40);
+    border-radius: 4px;
+    padding: 3px 9px;
+    font-size: 11.5px;
+    color: #8a1a20;
+    font-weight: 500;
+  }
+  .warning-item strong { color: #6f1318; font-weight: 700; }
+
+  /* ── SECTION TITLE ───────────────────────── */
+  .section-title {
+    font-size: 13px; font-weight: 700;
+    color: var(--gold);
+    text-transform: uppercase; letter-spacing: 0.08em;
+    margin: 22px 0 12px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .section-title::after {
+    content: ''; flex: 1; height: 1px;
+    background: linear-gradient(90deg, var(--copper), transparent);
+  }
+
+  /* ── PANELS / CHARTS ─────────────────────── */
+  .charts-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  .charts-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  .panel {
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+  }
+  .panel-header {
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 8px;
+  }
+  .panel-title {
+    font-size: 13px; font-weight: 700;
+    color: var(--gold);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .panel-icon { font-size: 18px; }
+  .panel-subtitle { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+  .legend { display: flex; gap: 12px; }
+  .legend-item { font-size: 11px; color: var(--text-dim); display: flex; align-items: center; gap: 5px; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .panel-body { padding: 16px 18px; }
+
+  /* ── AI RECOMMENDATION ───────────────────── */
+  .ai-panel {
+    background: linear-gradient(145deg, rgba(184,115,51,0.10), rgba(244,162,97,0.04));
+    border: 1px solid var(--copper);
+    border-radius: 10px;
+    padding: 18px 20px;
+    margin-bottom: 20px;
+  }
+  .ai-header {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 14px;
+  }
+  .ai-icon {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--copper), var(--gold));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    box-shadow: 0 0 12px rgba(244,162,97,0.4);
+  }
+  .ai-header h3 {
+    font-size: 14px; color: var(--gold);
+    text-transform: uppercase; letter-spacing: 0.04em; font-weight: 700;
+  }
+  .ai-recs {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+  .ai-rec {
+    background: var(--bg-card);
+    border-left: 3px solid var(--copper);
+    border-radius: 6px;
+    padding: 12px 14px;
+  }
+  .ai-rec h5 {
+    font-size: 12px; color: var(--gold);
+    font-weight: 700; margin-bottom: 6px;
+    text-transform: uppercase; letter-spacing: 0.03em;
+  }
+  .ai-rec ul { list-style: none; padding-left: 0; }
+  .ai-rec li {
+    font-size: 12px; color: var(--text-main);
+    padding: 4px 0 4px 16px; position: relative;
+    line-height: 1.5;
+  }
+  .ai-rec li::before {
+    content: '◆'; position: absolute; left: 0; top: 4px;
+    color: var(--copper-light); font-size: 9px;
+  }
+
+  /* ── TABLE ───────────────────────────────── */
+  .search-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px 18px;
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+  }
+  .search-input {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    color: var(--text-main);
+    border-radius: 6px;
+    padding: 7px 12px;
+    font-size: 12.5px;
+    width: 230px;
+    font-family: inherit;
+  }
+  .search-input:focus { outline: none; border-color: var(--copper); }
+  .filter-btn {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    border-radius: 6px;
+    padding: 7px 12px;
+    font-size: 11.5px;
+    cursor: pointer;
+    transition: all .2s;
+    font-family: inherit;
+  }
+  .filter-btn:hover { border-color: var(--copper); color: var(--gold); }
+  .filter-btn.active { background: var(--copper); color: white; border-color: var(--copper); font-weight: 600; }
+
+  .table-wrap { max-height: 480px; overflow-y: auto; }
+  .data-table {
+    width: 100%; border-collapse: collapse; font-size: 12.5px;
+  }
+  .data-table thead {
+    position: sticky; top: 0; z-index: 5;
+    background: var(--earth-mid);
+  }
+  .data-table th {
+    text-align: left; padding: 11px 14px;
+    color: var(--gold); font-weight: 700;
+    font-size: 11px; letter-spacing: 0.03em;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer; user-select: none;
+  }
+  .data-table th:hover { color: var(--copper-light); }
+  .data-table th.td-num { text-align: right; }
+  .data-table tbody tr {
+    border-bottom: 1px solid rgba(74,53,32,0.4);
+    transition: background .15s;
+  }
+  .data-table tbody tr:hover { background: rgba(184,115,51,0.06); }
+  .data-table td {
+    padding: 10px 14px; color: var(--text-main);
+  }
+  .data-table td.td-num { text-align: right; font-family: 'Roboto Mono', monospace; }
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+  .badge.red    { background: rgba(230,57,70,0.20); color: #ff7280; border: 1px solid rgba(230,57,70,0.5); }
+  .badge.amber  { background: rgba(249,199,79,0.18); color: #ffd966; border: 1px solid rgba(249,199,79,0.5); }
+  .badge.yellow { background: rgba(244,162,97,0.18); color: var(--gold); border: 1px solid rgba(244,162,97,0.45); }
+  .badge.green  { background: rgba(106,153,78,0.20); color: #a8d68e; border: 1px solid rgba(106,153,78,0.5); }
+
+  /* ── ALERT CRITERIA ──────────────────────── */
+  .alert-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-bottom: 22px;
+  }
+  .alert-item {
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 18px;
+    display: flex; gap: 14px;
+  }
+  .alert-item.red    { border-left: 4px solid var(--accent-red); }
+  .alert-item.amber  { border-left: 4px solid var(--accent-amber); }
+  .alert-item.green  { border-left: 4px solid var(--accent-green); }
+  .alert-bullet {
+    width: 14px; height: 14px; border-radius: 50%;
+    flex-shrink: 0; margin-top: 3px;
+  }
+  .alert-bullet.red    { background: var(--accent-red); box-shadow: 0 0 8px rgba(230,57,70,0.6); }
+  .alert-bullet.amber  { background: var(--accent-amber); box-shadow: 0 0 8px rgba(249,199,79,0.5); }
+  .alert-bullet.green  { background: var(--accent-green); box-shadow: 0 0 8px rgba(106,153,78,0.5); }
+  .alert-item h5 {
+    color: var(--text-main); font-size: 12.5px; font-weight: 700;
+    margin-bottom: 5px;
+  }
+  .alert-item p { font-size: 12px; color: var(--text-dim); line-height: 1.5; }
+  .alert-item b { color: var(--gold); }
+
+  /* ── GUIDE GRID ──────────────────────────── */
+  .guide-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-bottom: 22px;
+  }
+  .guide-card {
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 18px;
+  }
+  .guide-step {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 11px; color: var(--text-muted);
+    text-transform: uppercase; font-weight: 600; letter-spacing: 0.05em;
+    margin-bottom: 10px;
+  }
+  .step-num {
+    width: 24px; height: 24px; border-radius: 6px;
+    background: var(--copper); color: white;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700;
+  }
+  .guide-card h4 {
+    font-size: 13px; color: var(--gold);
+    margin-bottom: 10px; font-weight: 700;
+  }
+  .guide-card ul { list-style: none; }
+  .guide-card li {
+    font-size: 11.5px; color: var(--text-main);
+    padding: 3px 0 3px 14px; position: relative;
+    line-height: 1.5;
+  }
+  .guide-card li::before {
+    content: '▸'; position: absolute; left: 0;
+    color: var(--copper-light);
+  }
+
+  /* ── FOOTER ─────────────────────────────── */
+  .footer {
+    background: var(--bg-panel);
+    border-top: 1px solid var(--border);
+    padding: 14px 32px;
+    display: flex; justify-content: space-between;
+    align-items: center; flex-wrap: wrap; gap: 12px;
+    font-size: 11px; color: var(--text-muted);
+  }
+  .footer strong { color: var(--gold); }
+
+  /* scrollbars */
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: var(--bg-panel); }
+  ::-webkit-scrollbar-thumb { background: var(--earth-deep); border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--copper); }
+
+  @media (max-width: 1200px) {
+    .kpi-row { grid-template-columns: repeat(3, 1fr); }
+    .charts-grid, .charts-grid-2 { grid-template-columns: 1fr; }
+    .ai-recs { grid-template-columns: 1fr; }
+    .alert-grid { grid-template-columns: 1fr; }
+    .guide-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+/* ─── API status bar ─────────────────────────────────────────────────── */
+.api-bar {
+  background: linear-gradient(90deg, rgba(207,133,39,0.10), rgba(168,98,31,0.06));
+  border: 1px solid rgba(168,98,31,0.30);
+  border-radius: 10px;
+  padding: 12px 18px;
+  margin: 0 auto 16px;
+  max-width: 1500px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  font-family: 'Be Vietnam Pro', sans-serif;
+}
+.api-status {
+  color: var(--text-main);
+  font-size: 13px;
+  flex: 1;
+  min-width: 320px;
+}
+.api-status strong { color: var(--gold); }
+.api-status code {
+  background: rgba(168,98,31,0.10);
+  padding: 1px 6px;
+  border-radius: 3px;
+  font-family: 'Roboto Mono', monospace;
+  font-size: 11px;
+  color: var(--gold);
+}
+.api-btn {
+  background: linear-gradient(135deg, var(--copper), var(--bronze));
+  color: #fff;
+  border: none;
+  padding: 10px 22px;
+  border-radius: 6px;
+  font-family: 'Be Vietnam Pro', sans-serif;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  transition: transform 0.15s, opacity 0.15s;
+  white-space: nowrap;
+}
+.api-btn:hover { transform: translateY(-1px); opacity: 0.92; }
+.api-btn:disabled { opacity: 0.5; cursor: wait; transform: none; }
+
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-left">
+    <div class="logo-icon">⛏️</div>
+    <div class="header-title">
+      <h1>Dashboard Quản Lý Khoáng Sản – Tỉnh Sơn La</h1>
+      <p>Sở Nông nghiệp & Môi trường tỉnh Sơn La &nbsp;|&nbsp; Kịch bản IOC số 03 &nbsp;|&nbsp; Dữ liệu năm 2026</p>
+    </div>
+  </div>
+  <div class="header-meta">
+    <span class="header-badge">QLNN – Phòng Khoáng sản</span>
+    <div style="display:flex;align-items:center;gap:6px">
+      <div class="pulse-dot"></div>
+      <span class="live-label">Dữ liệu thực</span>
+    </div>
+  </div>
+</div>
+
+<!-- SCENARIO BAR -->
+<div class="scenario-bar">
+  <span class="scenario-label">Kịch bản</span>
+  <span class="scenario-title">KB-03: Giám sát quy hoạch – cấp phép – vi phạm khoáng sản & cảnh báo nguy cơ</span>
+  <div class="sep"></div>
+
+<!-- ═══ STATUS BAR (Apps Script integration) ════════════════════════════ -->
+<div class="api-bar">
+  <div id="apiStatus" class="api-status">⏳ Đang khởi tạo...</div>
+  <button id="btnRefresh" class="api-btn" onclick="loadData()">🔄 Cập nhật dữ liệu</button>
+</div>
+
+  <span class="scenario-tag">Khoáng sản</span>
+  <span class="scenario-tag">IOC</span>
+  <span class="scenario-tag">Cấp phép</span>
+  <span class="scenario-tag">Thanh kiểm tra</span>
+  <span class="scenario-tag">Cảnh báo tự động</span>
+</div>
+
+<div class="main">
+
+<!-- ── KPI CARDS ── -->
+<div class="kpi-row">
+
+  <div class="kpi-card copper">
+    <div class="kpi-label">Điểm quy hoạch khoáng sản</div>
+    <div class="kpi-value copper">130</div>
+    <div class="kpi-sub">11 loại khoáng sản trên 54 xã, phường</div>
+    <div class="kpi-target">
+      <div class="kpi-progress-bg">
+        <div class="kpi-progress-fill" style="width:100%;background:linear-gradient(90deg,#a8621f,#c47230)"></div>
+      </div>
+      <span class="kpi-target-label">QH đã phủ</span>
+    </div>
+  </div>
+
+  <div class="kpi-card gold">
+    <div class="kpi-label">Giấy phép đã cấp</div>
+    <div class="kpi-value gold">94</div>
+    <div class="kpi-sub">62 mỏ đang hoạt động · Trữ lượng ~65,4 triệu</div>
+    <div class="kpi-target">
+      <div class="kpi-progress-bg">
+        <div class="kpi-progress-fill" style="width:72%;background:linear-gradient(90deg,#a36420,#cf8527)"></div>
+      </div>
+      <span class="kpi-target-label">72% so với QH</span>
+    </div>
+  </div>
+
+  <div class="kpi-card bronze">
+    <div class="kpi-label">Lượt thanh, kiểm tra</div>
+    <div class="kpi-value bronze">20</div>
+    <div class="kpi-sub">5 mỏ tạm dừng hoạt động sau kiểm tra</div>
+    <div class="kpi-target">
+      <div class="kpi-progress-bg">
+        <div class="kpi-progress-fill" style="width:21%;background:linear-gradient(90deg,#7d4a1c,#a36420)"></div>
+      </div>
+      <span class="kpi-target-label">Tỷ lệ KT/CP: 21,3%</span>
+    </div>
+  </div>
+
+  <div class="kpi-card amber">
+    <div class="kpi-label">Vụ vi phạm phát hiện</div>
+    <div class="kpi-value amber">23</div>
+    <div class="kpi-sub">Tập trung: Đá vôi (16) – Than (6) – Antimon (1)</div>
+    <div class="kpi-target">
+      <div class="kpi-progress-bg">
+        <div class="kpi-progress-fill" style="width:24%;background:linear-gradient(90deg,#a08010,#d4a30a)"></div>
+      </div>
+      <span class="kpi-target-label">24,5% giấy phép có VP</span>
+    </div>
+  </div>
+
+  <div class="kpi-card red">
+    <div class="kpi-label">Đơn vị nguy cơ cao</div>
+    <div class="kpi-value red" id="countRed">8</div>
+    <div class="kpi-sub">Xã/phường có vi phạm cần can thiệp ngay</div>
+    <div class="kpi-target">
+      <div class="kpi-progress-bg">
+        <div class="kpi-progress-fill" style="width:14.8%;background:linear-gradient(90deg,#7a1620,#c1272d)"></div>
+      </div>
+      <span class="kpi-target-label">8 / 54 đơn vị có HĐ KS</span>
+    </div>
+  </div>
+
+</div>
+
+<!-- ── WARNING BANNER ── -->
+<div class="warning-banner">
+  <div class="warning-icon">⚠️</div>
+  <div class="warning-content">
+    <h4>CẢNH BÁO – 8 đơn vị có vi phạm khai thác khoáng sản cần can thiệp ngay</h4>
+    <p>Hệ thống tự động phát hiện 23 vụ vi phạm khai thác trên địa bàn 8 xã/phường, tập trung tại loại khoáng sản đá vôi (69,6%) và than đá (26,1%). Kiến nghị: Tăng cường thanh tra đột xuất, xử lý nghiêm các vi phạm chiếm đất, khai thác vượt phạm vi và sai thiết kế mỏ.</p>
+    <div class="warning-items" id="warnItems"></div>
+  </div>
+</div>
+
+<!-- ── SECTION: Tổng quan ── -->
+<div class="section-title">📊 Tổng quan quy hoạch – cấp phép – vi phạm theo loại khoáng sản</div>
+
+<div class="charts-grid">
+  <!-- Bar chart by mineral type -->
+  <div class="panel">
+    <div class="panel-header">
+      <div>
+        <div class="panel-title"><span class="panel-icon">📊</span> So sánh quy hoạch – cấp phép – kiểm tra – vi phạm</div>
+        <div class="panel-subtitle">11 loại khoáng sản · trục dọc = số lượng</div>
+      </div>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot" style="background:#c47230"></div>Quy hoạch</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#cf8527"></div>Cấp phép</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#4a7a36"></div>Kiểm tra</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#c1272d"></div>Vi phạm</div>
+      </div>
+    </div>
+    <div class="panel-body">
+      <canvas id="barMineral" height="260"></canvas>
+    </div>
+  </div>
+
+  <!-- Donut: cơ cấu giấy phép theo loại -->
+  <div class="panel">
+    <div class="panel-header">
+      <div>
+        <div class="panel-title"><span class="panel-icon">🥧</span> Cơ cấu giấy phép theo loại KS</div>
+        <div class="panel-subtitle">Phân bổ 94 giấy phép đã cấp</div>
+      </div>
+    </div>
+    <div class="panel-body">
+      <canvas id="donutMineral" height="260"></canvas>
+    </div>
+  </div>
+</div>
+
+<div class="charts-grid-2">
+  <!-- Top xã có nhiều cấp phép -->
+  <div class="panel">
+    <div class="panel-header">
+      <div>
+        <div class="panel-title"><span class="panel-icon">🏆</span> TOP 12 xã/phường nhiều giấy phép nhất</div>
+        <div class="panel-subtitle">Xếp hạng theo số giấy phép khai thác đã cấp</div>
+      </div>
+    </div>
+    <div class="panel-body">
+      <canvas id="barTopCp" height="280"></canvas>
+    </div>
+  </div>
+
+  <!-- Top xã vi phạm -->
+  <div class="panel">
+    <div class="panel-header">
+      <div>
+        <div class="panel-title"><span class="panel-icon">🚨</span> 8 xã/phường có vi phạm khai thác</div>
+        <div class="panel-subtitle">Xếp hạng theo số vụ vi phạm – cần ưu tiên xử lý</div>
+      </div>
+    </div>
+    <div class="panel-body">
+      <canvas id="barTopVp" height="280"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- ── AI RECOMMENDATIONS ── -->
+<div class="section-title">🤖 Đề xuất của AI hỗ trợ ra quyết định điều hành</div>
+
+<div class="ai-panel">
+  <div class="ai-header">
+    <div class="ai-icon">🤖</div>
+    <h3>AI Đề Xuất – Phân tích từ dữ liệu thực tế</h3>
+  </div>
+  <div class="ai-recs">
+    <div class="ai-rec">
+      <h5>🔴 Nhóm 8 xã có vi phạm</h5>
+      <ul>
+        <li>Tăng tần suất thanh tra đột xuất tại Mai Sơn, Lóng Phiêng, Tô Múa, Yên Châu</li>
+        <li>Buộc khắc phục vi phạm thiết kế mỏ trước khi gia hạn giấy phép</li>
+        <li>Phối hợp công an, kiểm lâm địa bàn giám sát chiếm đất, vượt ranh giới</li>
+        <li>Đề xuất tước quyền khai thác với đơn vị tái phạm ≥2 lần</li>
+      </ul>
+    </div>
+    <div class="ai-rec">
+      <h5>🟠 Nhóm 29 xã có cấp phép, chưa kiểm tra</h5>
+      <ul>
+        <li>Lập kế hoạch thanh tra định kỳ năm 2026 cho toàn bộ 74 giấy phép chưa được kiểm tra</li>
+        <li>Ưu tiên kiểm tra các mỏ thuộc xã Mường Hung, Chiềng Sơn, Sông Mã (≥7 GP/xã)</li>
+        <li>Bổ sung dữ liệu trữ lượng, thời hạn của 37 mỏ đang thiếu thông tin</li>
+      </ul>
+    </div>
+    <div class="ai-rec">
+      <h5>🟡 Nhóm 17 xã có quy hoạch, chưa cấp phép</h5>
+      <ul>
+        <li>Tổ chức đấu giá quyền khai thác KS theo Nghị định 193/2025/NĐ-CP</li>
+        <li>Rà soát các vướng mắc quy hoạch tại 2 xã đang bị treo</li>
+        <li>Định hướng các xã tiềm năng cát sỏi (Sông Mã) thành nguồn thu ngân sách</li>
+        <li>Cập nhật quy hoạch khoáng sản tỉnh giai đoạn 2026–2030</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ── DETAIL TABLE ── -->
+<div class="section-title">📋 Bảng chi tiết – 75 xã/phường trên địa bàn tỉnh</div>
+<div class="panel">
+  <div class="search-row">
+    <input class="search-input" id="searchInput" type="text" placeholder="🔍  Tìm kiếm xã/phường...">
+    <button class="filter-btn active" onclick="filterTable('all',this)">Tất cả</button>
+    <button class="filter-btn" onclick="filterTable('red',this)">🔴 Vi phạm</button>
+    <button class="filter-btn" onclick="filterTable('amber',this)">🟠 Chưa KT</button>
+    <button class="filter-btn" onclick="filterTable('yellow',this)">🟡 Chưa CP</button>
+    <button class="filter-btn" onclick="filterTable('active',this)">Có HĐ KS</button>
+    <span style="font-size:11px;color:var(--text-muted);margin-left:auto" id="tableCount"></span>
+  </div>
+  <div class="table-wrap">
+    <table class="data-table" id="dataTable">
+      <thead>
+        <tr>
+          <th onclick="sortTable(0)" title="Sắp xếp">TT ↕</th>
+          <th onclick="sortTable(1)" title="Sắp xếp">XÃ/PHƯỜNG ↕</th>
+          <th class="td-num" onclick="sortTable(2)" title="Sắp xếp">QUY HOẠCH ↕</th>
+          <th class="td-num" onclick="sortTable(3)" title="Sắp xếp">CẤP PHÉP ↕</th>
+          <th class="td-num" onclick="sortTable(4)" title="Sắp xếp">KIỂM TRA ↕</th>
+          <th class="td-num" onclick="sortTable(5)" title="Sắp xếp">TẠM DỪNG ↕</th>
+          <th class="td-num" onclick="sortTable(6)" title="Sắp xếp">VI PHẠM ↕</th>
+          <th>NHÓM</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ── ALERT CRITERIA ── -->
+<div class="section-title">🚦 Tiêu chí kích hoạt cảnh báo – Kịch bản KB-03</div>
+<div class="alert-grid">
+  <div class="alert-item red">
+    <div class="alert-bullet red"></div>
+    <div>
+      <h5>🔴 CẢNH BÁO ĐỎ – Hành động ngay</h5>
+      <p>Phát hiện vi phạm khai thác (chiếm đất, vượt ranh giới, sai thiết kế mỏ) <b>hoặc</b> giấy phép đã hết hạn nhưng vẫn còn hoạt động <b>hoặc</b> xã có ≥3 vụ vi phạm/năm.</p>
+    </div>
+  </div>
+  <div class="alert-item amber">
+    <div class="alert-bullet amber"></div>
+    <div>
+      <h5>🟡 CẢNH BÁO VÀNG – Theo dõi sát</h5>
+      <p>Đơn vị có giấy phép nhưng chưa được kiểm tra trong 24 tháng <b>hoặc</b> giấy phép sắp hết hạn (còn ≤24 tháng) <b>hoặc</b> mỏ thiếu thông tin trữ lượng, thời hạn.</p>
+    </div>
+  </div>
+  <div class="alert-item green">
+    <div class="alert-bullet green"></div>
+    <div>
+      <h5>🟢 THEO DÕI THƯỜNG QUY – Bình thường</h5>
+      <p>Mỏ có đầy đủ giấy phép, đã được kiểm tra ≥1 lần/năm, không phát hiện vi phạm. Trữ lượng, thời hạn khai thác cập nhật đầy đủ trên Kho DLDC.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ── SCENARIO GUIDE ── -->
+<div class="section-title">📖 Hướng dẫn vận hành kịch bản trên IOC</div>
+<div class="guide-grid">
+  <div class="guide-card">
+    <div class="guide-step"><div class="step-num">1</div>Nguồn dữ liệu</div>
+    <h4>Dữ liệu đầu vào</h4>
+    <ul>
+      <li>Biểu khoáng sản – mục 4 (QĐ 515)</li>
+      <li>Danh sách mỏ đang hoạt động</li>
+      <li>Hồ sơ giấy phép thăm dò, khai thác</li>
+      <li>Biên bản kiểm tra, kết luận thanh tra</li>
+      <li>Quyết định xử phạt vi phạm hành chính</li>
+    </ul>
+  </div>
+  <div class="guide-card">
+    <div class="guide-step"><div class="step-num">2</div>Quy trình xử lý</div>
+    <h4>Tổng hợp & Phân tích</h4>
+    <ul>
+      <li>Hợp nhất 11 loại KS × 75 xã thành ma trận</li>
+      <li>Tính tỷ lệ KT/CP, VP/CP theo từng loại</li>
+      <li>Phân nhóm 4 mức: Đỏ – Cam – Vàng – Trắng</li>
+      <li>AI phát hiện xã có vi phạm tái diễn</li>
+      <li>Đối chiếu thời hạn GP với ngày hiện tại</li>
+    </ul>
+  </div>
+  <div class="guide-card">
+    <div class="guide-step"><div class="step-num">3</div>Đầu ra & Kết quả</div>
+    <h4>Sản phẩm điều hành</h4>
+    <ul>
+      <li>Dashboard real-time trên IOC tỉnh</li>
+      <li>Danh sách xã cần can thiệp ưu tiên</li>
+      <li>Bản đồ phân bố mỏ và vi phạm</li>
+      <li>Báo cáo tự động gửi lãnh đạo Sở/UBND</li>
+      <li>Cảnh báo GP hết hạn trước 90 ngày</li>
+    </ul>
+  </div>
+  <div class="guide-card">
+    <div class="guide-step"><div class="step-num">4</div>Vận hành</div>
+    <h4>Tần suất & Trách nhiệm</h4>
+    <ul>
+      <li>Cập nhật dữ liệu: hàng quý (4 lần/năm)</li>
+      <li>Đột xuất khi phát sinh vi phạm/đấu giá</li>
+      <li>Phòng Khoáng sản chủ trì cập nhật</li>
+      <li>Lãnh đạo Sở duyệt trước 30 ngày</li>
+      <li>Đồng bộ với Kho DLDC tỉnh tự động</li>
+    </ul>
+  </div>
+</div>
+
+</div><!-- /main -->
+
+<div class="footer">
+  <span>📦 Dữ liệu: Biểu khoáng sản tỉnh Sơn La – Sửa đổi năm 2026 &nbsp;|&nbsp; Đơn vị quản lý: <strong>Phòng Khoáng sản – Sở NN&MT Sơn La</strong></span>
+  <span>Cuộc thi ứng dụng AI & Khai thác Kho DLDC tỉnh Sơn La năm 2026 &nbsp;|&nbsp; Kịch bản <strong>KB-03</strong></span>
+</div>
+
+<script>
+// ── DATA EMBED ────────────────────────────────────────────────────────
+// ── CONFIG ───────────────────────────────────────────────────────────
+// >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+//  DÁN URL APPS SCRIPT WEB APP VÀO ĐÂY (lấy sau khi Deploy ở bước cài đặt)
+//  Ví dụ: 'https://script.google.com/macros/s/AKfycby.../exec'
+const API_URL = 'https://script.google.com/macros/s/AKfycbxrrkdep3OhuUx4yhBx6xek28e7b4261GjnaNX1ANTAJbVybaIiUJH5mIJNuApka0SR/exec';
+// <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+// State
+let DATA = null;
+let META = null;
+
+// Adapter: convert Apps Script shape -> dashboard's expected shape
+function adaptApiData(api) {
+  const out = {
+    totals: {
+      qh: api.totals.qh, cp: api.totals.cp, kt: api.totals.kt,
+      td: api.totals.td || 0, thuhoi: 0, sapHet: 0, vuongmac: 0,
+      vp_dg: 0, vp_kt: api.totals.vp
+    },
+    minerals: {},
+    xa_data: api.xa_data,
+    mines_count: api.mines_count,
+    mines_VLXDTT: api.mines_VLXDTT,
+    mines_NhomI_II: api.mines_NhomI_II,
+    total_truluong: api.total_truluong,
+    no_thoihan: api.no_thoihan,
+    expired_gps: 0,
+    expiring_2yr: 0,
+    groups_count: api.groups_count,
+    red_xa: api.red_xa.map(x => ({
+      xa: x.xa, vp: x.vp, cp: x.cp, kt: x.kt,
+      mineral: x.mineral || ''
+    }))
+  };
+  // Minerals: API gives single .vp, dashboard expects vp_dg + vp_kt
+  Object.keys(api.minerals).forEach(k => {
+    const m = api.minerals[k];
+    out.minerals[k] = {
+      qh: m.qh, cp: m.cp, kt: m.kt, td: m.td,
+      thuhoi: 0, sapHet: 0, vuongmac: m.vuongmac || 0,
+      vp_dg: 0, vp_kt: m.vp
+    };
+  });
+  // Build mineral string for red_xa if missing (look up violations)
+  return out;
+}
+
+// Fetch from Apps Script
+async function loadData(force) {
+  const statusEl = document.getElementById('apiStatus');
+  const refreshBtn = document.getElementById('btnRefresh');
+  if (refreshBtn) refreshBtn.disabled = true;
+  if (statusEl) statusEl.textContent = '⏳ Đang tải dữ liệu từ Google Sheets...';
+
+  if (!API_URL || API_URL.indexOf('PASTE_YOUR') >= 0) {
+    if (statusEl) statusEl.innerHTML = '⚠️ <strong>CHƯA CẤU HÌNH API_URL</strong> — Mở file HTML bằng trình soạn thảo, dán URL Apps Script Web App vào biến <code>API_URL</code>, rồi mở lại trang này.';
+    if (refreshBtn) refreshBtn.disabled = false;
+    return;
+  }
+
+  try {
+    const url = API_URL + (API_URL.indexOf('?') >= 0 ? '&' : '?') + 't=' + Date.now();
+    const res = await fetch(url);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const api = await res.json();
+    if (api.error) throw new Error(api.message || 'API error');
+
+    DATA = adaptApiData(api);
+    META = api.meta;
+
+    renderAll();
+
+    if (statusEl) {
+      statusEl.innerHTML = `✅ Dữ liệu mới nhất · Cập nhật lúc <strong>${api.meta.generated_at}</strong> · ${api.meta.total_xa} xã · ${api.meta.total_mines} mỏ · ${api.meta.total_minerals} loại KS`;
+    }
+  } catch (err) {
+    if (statusEl) statusEl.innerHTML = '❌ Lỗi tải dữ liệu: ' + err.message + ' — Kiểm tra URL Apps Script và quyền truy cập.';
+    console.error(err);
+  } finally {
+    if (refreshBtn) refreshBtn.disabled = false;
+  }
+}
+
+// Track all chart instances so we can destroy & redraw on refresh
+const _charts = [];
+function _registerChart(ch) { _charts.push(ch); return ch; }
+function _resetCharts() {
+  while (_charts.length) {
+    try { _charts.pop().destroy(); } catch(e) {}
+  }
+}
+
+// Re-render everything from current DATA
+function renderAll() {
+  _resetCharts();
+  // Clear dynamic containers
+  ['warnItems','tableBody','filterStats'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el && el.tagName === 'TBODY') el.innerHTML = '';
+    else if (el) el.innerHTML = '';
+  });
+  // Update KPI numbers
+  updateKpiCards();
+  // Render charts & UI
+  renderWarningBanner();
+  renderAllCharts();
+  renderRecommendations();
+  renderTable();
+}
+
+function updateKpiCards() {
+  const k = document.querySelectorAll('.kpi-value');
+  if (k.length >= 5) {
+    k[0].textContent = DATA.totals.qh;
+    k[1].textContent = DATA.totals.cp;
+    k[2].textContent = DATA.totals.kt;
+    k[3].textContent = (DATA.totals.vp_dg + DATA.totals.vp_kt);
+    k[4].textContent = DATA.mines_count;
+  }
+}
+
+// ── COLORS ───────────────────────────────────────────────────────────
+const C = {
+  copper: '#a8621f', copperLight: '#c47230',
+  gold: '#cf8527', bronze: '#a36420',
+  red: '#c1272d', amber: '#d4a30a', green: '#4a7a36',
+  bgGrid: 'rgba(168,98,31,0.12)',
+  textDim: '#6b5a3f', textMain: '#2d1f10'
+};
+
+// global Chart.js defaults
+Chart.defaults.color = C.textDim;
+Chart.defaults.font.family = "'Be Vietnam Pro', sans-serif";
+Chart.defaults.font.size = 11;
+
+
+function renderWarningBanner() {
+// ── 1. WARNING BANNER ────────────────────────────────────────────────
+const warnItems = document.getElementById('warnItems');
+DATA.red_xa.forEach(x => {
+  const el = document.createElement('span');
+  el.className = 'warning-item';
+  el.innerHTML = `<strong>${x.xa}</strong> · ${x.vp} VP · ${x.mineral}`;
+  warnItems.appendChild(el);
+});
+
+
+}
+
+function renderAllCharts() {
+// ── 2. BAR CHART by MINERAL TYPE ─────────────────────────────────────
+const minLabels = Object.keys(DATA.minerals);
+const minQH = minLabels.map(k => DATA.minerals[k].qh);
+const minCP = minLabels.map(k => DATA.minerals[k].cp);
+const minKT = minLabels.map(k => DATA.minerals[k].kt);
+const minVP = minLabels.map(k => DATA.minerals[k].vp_dg + DATA.minerals[k].vp_kt);
+
+_registerChart(new Chart(document.getElementById('barMineral'), {
+  type: 'bar',
+  data: {
+    labels: minLabels,
+    datasets: [
+      { label: 'Quy hoạch', data: minQH, backgroundColor: C.copperLight, borderRadius: 4 },
+      { label: 'Cấp phép',  data: minCP, backgroundColor: C.gold, borderRadius: 4 },
+      { label: 'Kiểm tra',  data: minKT, backgroundColor: C.green, borderRadius: 4 },
+      { label: 'Vi phạm',   data: minVP, backgroundColor: C.red, borderRadius: 4 }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { grid: { color: C.bgGrid }, ticks: { font: { size: 10 }, maxRotation: 35, minRotation: 35 } },
+      y: { grid: { color: C.bgGrid }, beginAtZero: true }
+    }
+  }
+}));
+
+// ── 3. DONUT: cấp phép by loại ───────────────────────────────────────
+_registerChart(new Chart(document.getElementById('donutMineral'), {
+  type: 'doughnut',
+  data: {
+    labels: minLabels,
+    datasets: [{
+      data: minCP,
+      backgroundColor: ['#c47230','#cf8527','#a36420','#c69a3f','#a8421b','#a8621f','#7d4a1c','#d4a30a','#4a7a36','#7eaa5d','#b8513b'],
+      borderColor: '#ffffff',
+      borderWidth: 2
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: 'right',
+        labels: { font: { size: 10.5 }, padding: 8, boxWidth: 10 }
+      },
+      tooltip: {
+        callbacks: {
+          label: (ctx) => `${ctx.label}: ${ctx.parsed} GP`
+        }
+      }
+    },
+    cutout: '55%'
+  }
+}));
+
+// ── 4. TOP 12 xã có nhiều CP ─────────────────────────────────────────
+const top12 = [...DATA.xa_data].filter(d => d.cp > 0).sort((a,b) => b.cp - a.cp).slice(0,12);
+_registerChart(new Chart(document.getElementById('barTopCp'), {
+  type: 'bar',
+  data: {
+    labels: top12.map(d => d.xa),
+    datasets: [
+      { label: 'Cấp phép', data: top12.map(d => d.cp), backgroundColor: C.gold, borderRadius: 3 },
+      { label: 'Kiểm tra', data: top12.map(d => d.kt), backgroundColor: C.green, borderRadius: 3 },
+      { label: 'Vi phạm',  data: top12.map(d => d.vp), backgroundColor: C.red, borderRadius: 3 }
+    ]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { position: 'bottom', labels: { font: { size: 10.5 }, boxWidth: 12 } } },
+    scales: {
+      x: { grid: { color: C.bgGrid }, beginAtZero: true, stacked: false },
+      y: { grid: { display: false }, ticks: { font: { size: 10.5 } } }
+    }
+  }
+}));
+
+// ── 5. TOP xã VI PHẠM ────────────────────────────────────────────────
+const redList = [...DATA.red_xa];
+_registerChart(new Chart(document.getElementById('barTopVp'), {
+  type: 'bar',
+  data: {
+    labels: redList.map(d => d.xa),
+    datasets: [
+      { label: 'Vi phạm', data: redList.map(d => d.vp), backgroundColor: C.red, borderRadius: 3 },
+      { label: 'Kiểm tra đã thực hiện', data: redList.map(d => d.kt), backgroundColor: C.green, borderRadius: 3 },
+      { label: 'Cấp phép',  data: redList.map(d => d.cp), backgroundColor: C.gold, borderRadius: 3 }
+    ]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { position: 'bottom', labels: { font: { size: 10.5 }, boxWidth: 12 } } },
+    scales: {
+      x: { grid: { color: C.bgGrid }, beginAtZero: true },
+      y: { grid: { display: false }, ticks: { font: { size: 10.5 } } }
+    }
+  }
+}));
+
+
+}
+
+// renderRecommendations(): AI panel is static HTML — no-op
+function renderRecommendations() { /* noop: panel HTML is static */ }
+
+// renderTable() defined below also sets up search-input listener (one-time);
+// renderAll() will invoke renderTable() to refresh table contents.
+// ── 6. DATA TABLE ────────────────────────────────────────────────────
+let currentFilter = 'all';
+let sortCol = null, sortDir = 1;
+const tBody = document.getElementById('tableBody');
+const tCount = document.getElementById('tableCount');
+
+function groupBadge(g) {
+  if (g === 'red')    return '<span class="badge red">🔴 Vi phạm</span>';
+  if (g === 'amber')  return '<span class="badge amber">🟠 Chưa KT</span>';
+  if (g === 'yellow') return '<span class="badge yellow">🟡 Chưa CP</span>';
+  if (g === 'green')  return '<span class="badge green">🟢 OK</span>';
+  return '<span class="badge" style="background:rgba(255,255,255,0.05);color:#9b8568">— Trắng</span>';
+}
+
+function renderTable() {
+  const q = document.getElementById('searchInput').value.toLowerCase().trim();
+  let rows = [...DATA.xa_data];
+
+  if (currentFilter === 'red') rows = rows.filter(r => r.group === 'red');
+  else if (currentFilter === 'amber') rows = rows.filter(r => r.group === 'amber');
+  else if (currentFilter === 'yellow') rows = rows.filter(r => r.group === 'yellow');
+  else if (currentFilter === 'active') rows = rows.filter(r => r.group !== 'none');
+
+  if (q) rows = rows.filter(r => r.xa.toLowerCase().includes(q));
+
+  if (sortCol !== null) {
+    rows.sort((a, b) => {
+      const cols = ['stt','xa','qh','cp','kt','td','vp'];
+      const k = cols[sortCol];
+      const va = a[k], vb = b[k];
+      if (typeof va === 'string') return va.localeCompare(vb, 'vi') * sortDir;
+      return (va - vb) * sortDir;
+    });
+  }
+
+  tBody.innerHTML = rows.map(r => `
+    <tr>
+      <td>${r.stt}</td>
+      <td>${r.xa}</td>
+      <td class="td-num">${r.qh || '—'}</td>
+      <td class="td-num">${r.cp || '—'}</td>
+      <td class="td-num">${r.kt || '—'}</td>
+      <td class="td-num">${r.td || '—'}</td>
+      <td class="td-num" style="${r.vp>0?'color:#c1272d;font-weight:700':''}">${r.vp || '—'}</td>
+      <td>${groupBadge(r.group)}</td>
+    </tr>
+  `).join('');
+  tCount.textContent = `${rows.length} đơn vị`;
+}
+
+function filterTable(f, btn) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderTable();
+}
+
+function sortTable(col) {
+  if (sortCol === col) sortDir = -sortDir; else { sortCol = col; sortDir = -1; }
+  renderTable();
+}
+
+document.getElementById('searchInput').addEventListener('input', renderTable);
+
+
+// ── BOOTSTRAP ────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  loadData();
+});
+</script>
+</body>
+</html>
